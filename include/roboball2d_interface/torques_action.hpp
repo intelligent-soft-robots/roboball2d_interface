@@ -1,0 +1,60 @@
+#pragma once
+
+#include <array>
+#include "shared_memory/shared_memory.hpp"
+#include "shared_memory/serializer.hpp"
+
+#include "roboball2d_interface/item.hpp"
+
+namespace roboball2d_interface
+{
+
+  class TorquesAction
+  {
+
+  public:
+      
+    TorquesAction();
+    TorquesAction(double t1,
+		  double t2,
+		  double t3,
+		  bool relative=true);
+
+    // Mode 1: controlling robot with torques
+    void set_torques(double t1,
+		     double t2,
+		     double t3,
+		     bool relative=true);
+    bool are_torques_relative() const;
+    std::array<double,3> get_torques() const;
+      
+    std::string to_string() const;
+      
+  public:
+
+    template<class Archive>
+    void serialize(Archive& archive)
+    {
+      archive(id,
+	      torques_,
+	      relative_torques_);
+    }
+      
+  public:
+
+    static int get_id();
+    int id;
+    
+  private:
+
+    friend shared_memory::private_serialization;
+
+    // Mode 1 : torque control (for real robot)
+    // used to send torques to the robot
+    std::array<double,3> torques_;
+    bool torques_set_;
+    bool relative_torques_;
+
+  };
+
+}
