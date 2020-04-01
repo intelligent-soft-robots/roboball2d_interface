@@ -2,16 +2,16 @@ import multiprocessing
 import time
 import sys
 
-import real_time_tools_py
-import shared_memory_py
+import real_time_tools
+import shared_memory
 
-import tennis2d
+import roboball2d
 
-import o80_py as o80
-import o80_tennis2d_py as driver_interface 
+import o80
+import roboball2d_interface 
 
-from tennis2d.physics import B2World
-from tennis2d.robot import DefaultRobotState
+from roboball2d.physics import B2World
+from roboball2d.robot import DefaultRobotState
 
 import configuration
 import run_support
@@ -42,35 +42,38 @@ def run_simulation(config,
                                           render=False)
 
     time_start = time.time()
+    previous_ball_gun_id = -1
     previous_action_id = -1
     torques = [0,0,0]
     robot_state = None
 
-    frequency_manager = real_time_tools_py.FrequencyManager(
+    frequency_manager = real_time_tools.FrequencyManager(
         configuration.Interfaces.reality_frequency)
 
     while run_support.should_run(switch):
 
         # if ball gun requested to shoot, doing so.
-        if sim_ball_gun.reader.read_ball_gun_shoot():
-            # (sim_robot is managing the simulation)
-            world_state = sim_robot.world.reset(None,sim_robot.ball_gun,
-                                                reset_time=False)
-            sim_ball_gun.writer.write_ball_gun_shoot(False)
+        ball_gun_action = sim_ball_gun.ball_gun_reader.read_action() 
+        if all([ball_gun_action.is_valid(),
+                ball_gun_action.should_shoot(),
+                ball_gun_action.id!=previous_ball_gun_id]):
+            previous_ball_gun_id = ball_gun_action.id
+            world_state = sim_robot.world.reset(None,sim_robot.ball_gun)
+            sim_ball_gun.ball_gun_writer.write_action(
+                roboball2d_interface.BallGunAction(False))
 
         # mirroring the robot based on action provided by the driver
-        action = sim_robot.reader.read_action()
-        should_use_action = all([a is True for a in (action.valid,
-                                                     previous_action_id!=action.id,
-                                                     action.is_mirroring_information_set())])
+        action = sim_robot.mirror_reader.read_action()
+        should_use_action = previous_action_id!=action.id
+        should_use_action = should_use_action and action.is_valid()
+        
+        if should_use_action:
 
-        if should_use_action
-:
             # mi = [ [angle,angular_velocity], ... ]
             mi = action.get_mirroring_information()
             angles = [m[0] for m in mi]
             angular_velocities = [m[1] for m in mi]
-            robot_state = tennis2d.robot.DefaultRobotState(
+            robot_state = roboball2d.robot.DefaultRobotState(
                 sim_robot.robot_config,
                 generalized_coordinates=angles,
                 generalized_velocities=angular_velocities)
@@ -84,7 +87,7 @@ def run_simulation(config,
             # converting world state to something the driver will
             # be able to use
             sm_world_state = run_support.convert(world_state)
-            sim_robot.writer.write_world_state(sm_world_state)
+            sim_robot.mirror_writer.write_world_state(sm_world_state)
         
             # rendering
             if sim_robot.renderer:

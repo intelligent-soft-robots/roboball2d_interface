@@ -2,19 +2,18 @@ import multiprocessing
 import time
 import sys
 
-import shared_memory_py
+import shared_memory
+import roboball2d_interface
 
-import o80_tennis2d_py as driver_interface 
-
-from tennis2d.physics import B2World
-from tennis2d.physics import WorldState
-from tennis2d.rendering import PygletRenderer
-from tennis2d.rendering import RenderingConfig
-from tennis2d.robot import DefaultRobotConfig
-from tennis2d.robot import DefaultRobotState
-from tennis2d.ball import BallConfig
-from tennis2d.ball_gun import DefaultBallGun
-from tennis2d.robot import DefaultRobotState
+from roboball2d.physics import B2World
+from roboball2d.physics import WorldState
+from roboball2d.rendering import PygletRenderer
+from roboball2d.rendering import RenderingConfig
+from roboball2d.robot import DefaultRobotConfig
+from roboball2d.robot import DefaultRobotState
+from roboball2d.ball import BallConfig
+from roboball2d.ball_gun import DefaultBallGun
+from roboball2d.robot import DefaultRobotState
 
 def _item_to_item(item1,item2):
     if item1 is None:
@@ -58,7 +57,7 @@ def _convert(w1,w2):
         w2.t = w1.t
 
 def convert(world_state):
-    sm_world_state = driver_interface.WorldState()
+    sm_world_state = roboball2d_interface.WorldState()
     _convert(world_state,sm_world_state)
     return sm_world_state
 
@@ -68,13 +67,13 @@ def reverse(sm_world_state,ball_config):
     return world_state
 
 def should_run(switch):
-    value = shared_memory_py.get_bool("switch",switch)
+    value = shared_memory.get_bool("switch",switch)
     return value
 
 def clean_memory(switch, interface_ids):
-    shared_memory_py.clear_shared_memory(switch)
+    shared_memory.clear_shared_memory(switch)
     for interface_id in interface_ids:
-        shared_memory_py.clear_shared_memory(interface_id)
+        shared_memory.clear_shared_memory(interface_id)
         
 # expect a configuration.txt file in the same folder as this run_support.py
 # file
@@ -119,9 +118,12 @@ def get_configuration_attribute(configuration,attr):
 
 class Simulation:
 
-    __slots__=["robot_config","ball_config",
-               "world","renderer","robot_init",
-               "ball_gun","reader","writer"]
+    __slots__=[ "robot_config","ball_config",
+                "world","renderer","robot_init",
+                "ball_gun",
+                "torques_reader","torques_writer",
+                "mirror_reader","mirror_writer",
+                "ball_gun_reader","ball_gun_writer" ]
     
     def __init__(self,interface_id,
                  ball=True,
@@ -182,14 +184,18 @@ class Simulation:
         if robot:
             self.robot_init = DefaultRobotState(self.robot_config)
 
-        self.reader = driver_interface.Reader(interface_id)
-        self.writer = driver_interface.Writer(interface_id)
+        self.torques_reader = roboball2d_interface.TorquesReader(interface_id)
+        self.torques_writer = roboball2d_interface.TorquesWriter(interface_id)
 
+        self.mirror_reader = roboball2d_interface.MirrorReader(interface_id)
+        self.mirror_writer = roboball2d_interface.MirrorWriter(interface_id)
 
+        self.ball_gun_reader = roboball2d_interface.BallGunReader(interface_id)
+        self.ball_gun_writer = roboball2d_interface.BallGunWriter(interface_id)
         
 
 def _stop(switch):
-    shared_memory_py.set_bool("switch",switch,False)
+    shared_memory.set_bool("switch",switch,False)
 
 def execute(configuration,
             function,
@@ -212,7 +218,7 @@ def execute(configuration,
     print("switch:",switch," | interfaces:",*interface_ids)
     print()
 
-    shared_memory_py.set_bool("switch",switch,True)
+    shared_memory.set_bool("switch",switch,True)
     function(configuration,switch,*interface_ids,render=rendering)
     
     clean_memory(switch,interface_ids)

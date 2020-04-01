@@ -1,15 +1,15 @@
 import time
 import sys
 
-import shared_memory_py
-import real_time_tools_py
+import shared_memory
+import real_time_tools
 
-from tennis2d.rendering import PygletRenderer
-from tennis2d.rendering import RenderingConfig
-from tennis2d.ball import BallConfig
+from roboball2d.rendering import PygletRenderer
+from roboball2d.rendering import RenderingConfig
+from roboball2d.ball import BallConfig
 
-import o80_py as o80
-import o80_tennis2d_py as driver_interface 
+import o80
+import roboball2d_interface
 
 import run_support
 import configuration
@@ -24,15 +24,15 @@ def run_vision(configuration,
                render=True):
 
     # managing running frequency
-    frequency_manager = real_time_tools_py.FrequencyManager(
+    frequency_manager = real_time_tools.FrequencyManager(
         configuration.Interfaces.vision_frequency)
     
     # to simulate vision: we plug directly to the shared memory
     # in which the run_reality process write world_state (originally
     # for the sake of the driver)
 
-    reader = driver_interface.Reader(interface_id_robot)
-    writer = driver_interface.Writer(interface_id_vision)
+    reader = roboball2d_interface.TorquesReader(interface_id_robot)
+    writer = roboball2d_interface.TorquesWriter(interface_id_vision)
 
     ball_config = BallConfig()
 

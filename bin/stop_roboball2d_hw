@@ -2,6 +2,6 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-DIR=${DIR}/../python/o80_tennis2d
+DIR=${DIR}/../python/roboball2d_interface
 
 python3 ${DIR}/run_reality.py -stop & python3 ${DIR}/run_simulation.py -stop & python3 ${DIR}/run_vision.py -stop

@@ -1,12 +1,12 @@
 import time
 import sys
 
-import real_time_tools_py
-import shared_memory_py
+import real_time_tools
+import shared_memory
 
-import o80_py as o80
-import o80_tennis2d_py as driver_interface 
-from tennis2d.physics import WorldState
+import o80
+import roboball2d_interface 
+from roboball2d.physics import WorldState
 
 import run_support
 
@@ -22,7 +22,7 @@ def run_reality(configuration,
                 render=True):
 
     
-    frequency_manager = real_time_tools_py.FrequencyManager(
+    frequency_manager = real_time_tools.FrequencyManager(
         configuration.Interfaces.reality_frequency)
     
     # note: rendering real robot but omitting ball (will be displayed
@@ -43,6 +43,7 @@ def run_reality(configuration,
                                           render=False)
 
     time_start = time.time()
+    previous_ball_gun_id = -1
     previous_action_id = -1
     torques = [0,0,0]
 
@@ -51,24 +52,26 @@ def run_reality(configuration,
         # -- Ball Gun -- #
         
         # ball gun requested to shoot. Doing so.
-        if sim_ball_gun.reader.read_ball_gun_shoot():
-            # (sim_robot is managing the simulation)
+        ball_gun_action = sim_ball_gun.ball_gun_reader.read_action()
+        if all([ball_gun_action.is_valid(),
+                ball_gun_action.should_shoot(),
+                ball_gun_action.id!=previous_ball_gun_id]):
+            previous_ball_gun_id=ball_gun_action.id
             sim_robot.world.reset(None,sim_robot.ball_gun)
-            sim_ball_gun.writer.write_ball_gun_shoot(False)
 
         # -- Torque Control Robot -- #
             
         # reading from shared memory the current
-        # active action (action : tennis2d_interface.Action).
+        # active action (action : roboball2d_interface.Action).
         # note: the action is written in the shared memory
-        # by tennis2d_interface.Driver
-        action = sim_robot.reader.read_action()
+        # by roboball2d_interface.Driver
+        action = sim_robot.torques_reader.read_action()
 
         # the action is used if it is valid (i.e. not a dummy initial
         # object) and has torques defined
-        should_use_action = all([a is True for a in (action.valid,
-                                                     previous_action_id!=action.id,
-                                                     action.are_torques_set())])
+        should_use_action = previous_action_id!=action.id
+        should_use_action = should_use_action and action.is_valid()
+                                 
         if should_use_action:
             torques = action.get_torques()
 
@@ -84,15 +87,15 @@ def run_reality(configuration,
 
         previous_action_id = action.id
 
-        # sim.world returns world_state as defined in the tennis2d
-        # python package, but driver_interfaces need an instance of
-        # o80_tennis2d.tennis2d_interface.WorldState, which is similar but supports
+        # sim.world returns world_state as defined in the roboball2d
+        # python package, but roboball2d_interfaces need an instance of
+        # o80_roboball2d.roboball2d_interface.WorldState, which is similar but supports
         # serialization, i.e. can be written in shared_memory
 
         sm_world_state = run_support.convert(world_state)
         
         # sharing the observed world state with rest of the world
-        sim_robot.writer.write_world_state(sm_world_state)
+        sim_robot.torques_writer.write_world_state(sm_world_state)
 
         # rendering robot
         if sim_robot.renderer:

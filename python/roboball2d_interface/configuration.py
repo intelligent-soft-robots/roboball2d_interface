@@ -5,7 +5,7 @@ class Interfaces:
     # interfaces ids are shared memory keys allowing
     # communication between hardware/simulation and
     # drivers as declared in
-    # /include/o80_tennis2d/tennis2d_interface/driver.hpp
+    # /include/o80_roboball2d/roboball2d_interface/driver.hpp
     
     real_robot = "real-robot"
     real_ball_gun = "real-ball-gun"

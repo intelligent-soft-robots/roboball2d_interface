@@ -53,7 +53,8 @@ pybind11_add_module(roboball2d_interface_py
 target_link_libraries(roboball2d_interface_py
   PUBLIC roboball2d_interface ${catkin_LIBRARIES})
 set_target_properties(roboball2d_interface_py PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_PYTHON_DESTINATION})
+  LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_PYTHON_DESTINATION}
+  OUTPUT_NAME roboball2d_interface)
 install(TARGETS roboball2d_interface_py
   DESTINATION ${CATKIN_GLOBAL_PYTHON_DESTINATION})
 
