@@ -35,7 +35,7 @@ public:
     }
 };
 
-    template<int NB_ROBOTS,int NB_BALLS,int TYPE=0>
+    template<int NB_ROBOTS,int NB_BALLS>
 class WorldState
 {
 public:

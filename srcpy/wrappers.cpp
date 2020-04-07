@@ -13,65 +13,65 @@
 
 using namespace roboball2d_interface;
 
-template<int NB_ROBOTS,int NB_BALLS,int TYPE>
+template<int NB_ROBOTS,int NB_BALLS>
 void add_world_state(pybind11::module &m,
 		     std::string classname_prefix)
 {
-    pybind11::class_<roboball2d_interface::WorldState<NB_ROBOTS,NB_BALLS,TYPE>>(m,(classname_prefix+"WorldState").c_str())
+    pybind11::class_<roboball2d_interface::WorldState<NB_ROBOTS,NB_BALLS>>(m,(classname_prefix+"WorldState").c_str())
         .def(pybind11::init<>())
-        .def_readonly("id", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::id)
-        .def_readonly("valid", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::valid)
-        .def_readwrite("t", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::t)
-        .def_readwrite("ball", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::ball)
-        .def_readwrite("robot", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::robot)
-	.def_readwrite("balls", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::balls)
-        .def_readwrite("robots", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::robots)
+        .def_readonly("id", &WorldState<NB_ROBOTS,NB_BALLS>::id)
+        .def_readonly("valid", &WorldState<NB_ROBOTS,NB_BALLS>::valid)
+        .def_readwrite("t", &WorldState<NB_ROBOTS,NB_BALLS>::t)
+        .def_readwrite("ball", &WorldState<NB_ROBOTS,NB_BALLS>::ball)
+        .def_readwrite("robot", &WorldState<NB_ROBOTS,NB_BALLS>::robot)
+	.def_readwrite("balls", &WorldState<NB_ROBOTS,NB_BALLS>::balls)
+        .def_readwrite("robots", &WorldState<NB_ROBOTS,NB_BALLS>::robots)
         .def_readwrite("ball_hits_floor_position",
-                       &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::ball_hits_floor_position)
-        .def_readwrite("ball_hits_floor", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::ball_hits_floor)
-        .def_readwrite("ball_hits_racket", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::ball_hits_racket)
+                       &WorldState<NB_ROBOTS,NB_BALLS>::ball_hits_floor_position)
+        .def_readwrite("ball_hits_floor", &WorldState<NB_ROBOTS,NB_BALLS>::ball_hits_floor)
+        .def_readwrite("ball_hits_racket", &WorldState<NB_ROBOTS,NB_BALLS>::ball_hits_racket)
 	.def_readwrite("balls_hits_floor_position",
-                       &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::balls_hits_floor_position)
-        .def_readwrite("balls_hits_floor", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::balls_hits_floor)
-        .def_readwrite("balls_hits_racket", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::balls_hits_racket)
-        .def("console", &WorldState<NB_ROBOTS,NB_BALLS,TYPE>::console);
+                       &WorldState<NB_ROBOTS,NB_BALLS>::balls_hits_floor_position)
+        .def_readwrite("balls_hits_floor", &WorldState<NB_ROBOTS,NB_BALLS>::balls_hits_floor)
+        .def_readwrite("balls_hits_racket", &WorldState<NB_ROBOTS,NB_BALLS>::balls_hits_racket)
+        .def("console", &WorldState<NB_ROBOTS,NB_BALLS>::console);
 
     
-    pybind11::class_<roboball2d_interface::Reader<TorquesAction,NB_ROBOTS,NB_BALLS,TYPE>>(
+    pybind11::class_<roboball2d_interface::Reader<TorquesAction,NB_ROBOTS,NB_BALLS>>(
 										     m, (classname_prefix+"TorquesReader").c_str())
         .def(pybind11::init<std::string>())
-        .def("read_action", &Reader<TorquesAction,NB_ROBOTS,NB_BALLS,TYPE>::read_action)
-        .def("read_world_state", &Reader<TorquesAction,NB_ROBOTS,NB_BALLS,TYPE>::read_world_state);
+        .def("read_action", &Reader<TorquesAction,NB_ROBOTS,NB_BALLS>::read_action)
+        .def("read_world_state", &Reader<TorquesAction,NB_ROBOTS,NB_BALLS>::read_world_state);
 
-    pybind11::class_<roboball2d_interface::Writer<TorquesAction,NB_ROBOTS,NB_BALLS,TYPE>>(
+    pybind11::class_<roboball2d_interface::Writer<TorquesAction,NB_ROBOTS,NB_BALLS>>(
 										     m, (classname_prefix+"TorquesWriter").c_str())
         .def(pybind11::init<std::string>())
-        .def("write_world_state", &Writer<TorquesAction,NB_ROBOTS,NB_BALLS,TYPE>::write_world_state)
-        .def("write_action", &Writer<TorquesAction,NB_ROBOTS,NB_BALLS,TYPE>::write_action);
+        .def("write_world_state", &Writer<TorquesAction,NB_ROBOTS,NB_BALLS>::write_world_state)
+        .def("write_action", &Writer<TorquesAction,NB_ROBOTS,NB_BALLS>::write_action);
 
-    pybind11::class_<roboball2d_interface::Reader<BallGunAction,NB_ROBOTS,NB_BALLS,TYPE>>(
+    pybind11::class_<roboball2d_interface::Reader<BallGunAction,NB_ROBOTS,NB_BALLS>>(
 										     m, (classname_prefix+"BallGunReader").c_str())
         .def(pybind11::init<std::string>())
-        .def("read_action", &Reader<BallGunAction,NB_ROBOTS,NB_BALLS,TYPE>::read_action)
-        .def("read_world_state", &Reader<BallGunAction,NB_ROBOTS,NB_BALLS,TYPE>::read_world_state);
+        .def("read_action", &Reader<BallGunAction,NB_ROBOTS,NB_BALLS>::read_action)
+        .def("read_world_state", &Reader<BallGunAction,NB_ROBOTS,NB_BALLS>::read_world_state);
 
-    pybind11::class_<roboball2d_interface::Writer<BallGunAction,NB_ROBOTS,NB_BALLS,TYPE>>(
+    pybind11::class_<roboball2d_interface::Writer<BallGunAction,NB_ROBOTS,NB_BALLS>>(
 										     m, (classname_prefix+"BallGunWriter").c_str())
         .def(pybind11::init<std::string>())
-        .def("write_world_state", &Writer<BallGunAction,NB_ROBOTS,NB_BALLS,TYPE>::write_world_state)
-        .def("write_action", &Writer<BallGunAction,NB_ROBOTS,NB_BALLS,TYPE>::write_action);
+        .def("write_world_state", &Writer<BallGunAction,NB_ROBOTS,NB_BALLS>::write_world_state)
+        .def("write_action", &Writer<BallGunAction,NB_ROBOTS,NB_BALLS>::write_action);
 
-    pybind11::class_<roboball2d_interface::Reader<MirrorAction,NB_ROBOTS,NB_BALLS,TYPE>>(m,
+    pybind11::class_<roboball2d_interface::Reader<MirrorAction,NB_ROBOTS,NB_BALLS>>(m,
 										    (classname_prefix+"MirrorReader").c_str())
         .def(pybind11::init<std::string>())
-        .def("read_action", &Reader<MirrorAction,NB_ROBOTS,NB_BALLS,TYPE>::read_action)
-        .def("read_world_state", &Reader<MirrorAction,NB_ROBOTS,NB_BALLS,TYPE>::read_world_state);
+        .def("read_action", &Reader<MirrorAction,NB_ROBOTS,NB_BALLS>::read_action)
+        .def("read_world_state", &Reader<MirrorAction,NB_ROBOTS,NB_BALLS>::read_world_state);
 
-    pybind11::class_<roboball2d_interface::Writer<MirrorAction,NB_ROBOTS,NB_BALLS,TYPE>>(m,
+    pybind11::class_<roboball2d_interface::Writer<MirrorAction,NB_ROBOTS,NB_BALLS>>(m,
 										    (classname_prefix+"MirrorWriter").c_str())
         .def(pybind11::init<std::string>())
-        .def("write_world_state", &Writer<MirrorAction,NB_ROBOTS,NB_BALLS,TYPE>::write_world_state)
-        .def("write_action", &Writer<MirrorAction,NB_ROBOTS,NB_BALLS,TYPE>::write_action);
+        .def("write_world_state", &Writer<MirrorAction,NB_ROBOTS,NB_BALLS>::write_world_state)
+        .def("write_action", &Writer<MirrorAction,NB_ROBOTS,NB_BALLS>::write_action);
 
     
 }

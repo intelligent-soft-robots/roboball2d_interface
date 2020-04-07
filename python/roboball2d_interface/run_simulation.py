@@ -83,11 +83,11 @@ def run_simulation(config,
             world_state = sim_robot.world.step(None,
                                                mirroring_robot_states=robot_state,
                                                current_time=time.time()-time_start)
-            
+
             # converting world state to something the driver will
             # be able to use
             sm_world_state = run_support.convert(world_state)
-            
+
             sim_robot.mirror_writer.write_world_state(sm_world_state)
             
             # rendering

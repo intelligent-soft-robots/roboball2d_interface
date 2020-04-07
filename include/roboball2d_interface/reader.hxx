@@ -1,14 +1,14 @@
 
-template <class Action,int NB_ROBOTS, int NB_BALLS, int TYPE>
-Reader<Action,NB_ROBOTS,NB_BALLS,TYPE>::Reader(std::string interface_id)
+template <class Action,int NB_ROBOTS, int NB_BALLS>
+Reader<Action,NB_ROBOTS,NB_BALLS>::Reader(std::string interface_id)
     : interface_id_(interface_id)
 {
 }
 
-template <class Action,int NB_ROBOTS, int NB_BALLS, int TYPE>
-WorldState<NB_ROBOTS,NB_BALLS,TYPE> Reader<Action,NB_ROBOTS,NB_BALLS,TYPE>::read_world_state() const
+template <class Action,int NB_ROBOTS, int NB_BALLS>
+WorldState<NB_ROBOTS,NB_BALLS> Reader<Action,NB_ROBOTS,NB_BALLS>::read_world_state() const
 {
-    WorldState<NB_ROBOTS,NB_BALLS,TYPE> ws;
+    WorldState<NB_ROBOTS,NB_BALLS> ws;
     try
     {
         shared_memory::deserialize(interface_id_, "world_state", ws);
@@ -19,8 +19,8 @@ WorldState<NB_ROBOTS,NB_BALLS,TYPE> Reader<Action,NB_ROBOTS,NB_BALLS,TYPE>::read
     return ws;
 }
 
-template <class Action,int NB_ROBOTS, int NB_BALLS, int TYPE>
-Action Reader<Action,NB_ROBOTS,NB_BALLS,TYPE>::read_action() const
+template <class Action,int NB_ROBOTS, int NB_BALLS>
+Action Reader<Action,NB_ROBOTS,NB_BALLS>::read_action() const
 {
     Action action;
     try

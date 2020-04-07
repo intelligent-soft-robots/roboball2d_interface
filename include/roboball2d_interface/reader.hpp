@@ -5,12 +5,12 @@
 
 namespace roboball2d_interface
 {
-    template <class Action,int NB_ROBOTS,int NB_BALLS,int TYPE>
+    template <class Action,int NB_ROBOTS,int NB_BALLS>
 class Reader
 {
 public:
     Reader(std::string interface_id);
-    WorldState<NB_ROBOTS,NB_BALLS,TYPE> read_world_state() const;
+    WorldState<NB_ROBOTS,NB_BALLS> read_world_state() const;
     Action read_action() const;
 
 private:

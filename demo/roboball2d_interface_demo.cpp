@@ -13,41 +13,35 @@ using namespace roboball2d_interface;
 
 #define NB_ROBOTS 1
 #define NB_BALLS 1
-#define TYPE 112
 
 int main()
 {
-    // max time allowed for the robot to apply an action.
-    double max_action_duration_s = std::numeric_limits<double>::infinity();
-    // max time allowed for 2 successive actions
-    double max_inter_action_duration_s =
-        std::numeric_limits<double>::infinity();
-
+    
     // should be the same value as the one set in
     // /python/roboball2d_interface/configuration.py
     std::string interface_id_real_robot = "real-robot";
     std::string interface_id_ball_gun = "real-ball-gun";
 
-    typedef Driver<TorquesAction,NB_ROBOTS,NB_BALLS,TYPE> DriverTorques;
-    typedef Driver<BallGunAction,NB_ROBOTS,NB_BALLS,TYPE> DriverBallGun;
+    typedef Driver<TorquesAction,NB_ROBOTS,NB_BALLS> DriverTorques;
+    typedef Driver<BallGunAction,NB_ROBOTS,NB_BALLS> DriverBallGun;
     
     typedef robot_interfaces::Robot< TorquesAction,
-				     WorldState<NB_ROBOTS,NB_BALLS,TYPE>,
+				     WorldState<NB_ROBOTS,NB_BALLS>,
 				     DriverTorques > 
         Robot;
-    Robot robot(max_action_duration_s,
-                max_inter_action_duration_s,
+    Robot robot(std::numeric_limits<double>::infinity(),
+		std::numeric_limits<double>::infinity(),
                 interface_id_real_robot);
 
     typedef robot_interfaces::Robot< BallGunAction,
-				     WorldState<NB_ROBOTS,NB_BALLS,TYPE>,
+				     WorldState<NB_ROBOTS,NB_BALLS>,
 				     DriverBallGun >
         BallGun;
 
-    BallGun ball_gun(max_action_duration_s,
-                     max_inter_action_duration_s,
-                     interface_id_ball_gun);
-
+    BallGun ball_gun(std::numeric_limits<double>::infinity(),
+		    std::numeric_limits<double>::infinity(),
+		    interface_id_ball_gun);
+    
     robot.initialize();
     ball_gun.initialize();
 
@@ -62,6 +56,7 @@ int main()
 
     while (current_time - start_time < 10.0)
     {
+
         if (current_time > ball_gun_time)
         {
             ball_gun.append_desired_action(BallGunAction(true));
@@ -79,7 +74,7 @@ int main()
         TorquesAction action(torque1, torque2, torque3, relative_torques);
 
         robot_interfaces::TimeIndex index = robot.append_desired_action(action);
-        WorldState<NB_ROBOTS,NB_BALLS,TYPE> world_state = robot.get_observation(index);
+        WorldState<NB_ROBOTS,NB_BALLS> world_state = robot.get_observation(index);
 
         std::cout << current_time - start_time << "\t|\t"
                   << world_state.robot.joints[0].angle << "\t"

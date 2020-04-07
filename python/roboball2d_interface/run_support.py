@@ -57,7 +57,7 @@ def _convert(w1,w2):
     if w1.t is not None:
         w2.t = w1.t
 
-def convert(world_state):
+def convert(world_state,verbose=False):
     nb_robots = len(world_state.robots)
     nb_balls = len(world_state.balls)
     if nb_balls == 1 : 
