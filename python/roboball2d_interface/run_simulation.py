@@ -26,7 +26,7 @@ def run_simulation(config,
 
     nb_balls = config.Balls.nb_balls
     goal = (config.Goal.x_min,config.Goal.x_max,config.Goal.color)
-    
+
     sim_robot = run_support.Simulation(interface_id_robot,
                                        ball=nb_balls,
                                        robot=True,
@@ -87,8 +87,9 @@ def run_simulation(config,
             # converting world state to something the driver will
             # be able to use
             sm_world_state = run_support.convert(world_state)
+            
             sim_robot.mirror_writer.write_world_state(sm_world_state)
-        
+            
             # rendering
             if sim_robot.renderer:
                 sim_robot.renderer.render(world_state,

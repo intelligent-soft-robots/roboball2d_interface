@@ -62,7 +62,7 @@ install(TARGETS roboball2d_interface_py
 # Python package  #
 ###################
 
-catkin_python_setup()
+#catkin_python_setup()
 
 
 

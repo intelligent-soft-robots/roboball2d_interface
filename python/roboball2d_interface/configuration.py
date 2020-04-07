@@ -20,8 +20,8 @@ class Interfaces:
     switch_vision = "vision"
     switch_simulation = "simulation"
 
-    # at which "framerate" the simulation that here pretends
-    # to be reality (attempts to) runs
+    # at which frequency the simulation (that pretends
+    # to be reality) (attempts to) runs
 
     reality_frequency = 2000
     

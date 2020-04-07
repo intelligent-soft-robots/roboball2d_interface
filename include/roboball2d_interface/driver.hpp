@@ -13,30 +13,31 @@
 
 namespace roboball2d_interface
 {
-template <class Action>
-class Driver : public robot_interfaces::RobotDriver<Action, WorldState>
+    template <class Action,int NB_ROBOTS,int NB_BALLS,int TYPE>
+    class Driver : public robot_interfaces::RobotDriver< Action,
+							 WorldState<NB_ROBOTS,NB_BALLS,TYPE > >
 
 {
 public:
     Driver(std::string interface_id);
     void initialize();
     Action apply_action(const Action &desired_action);
-    WorldState get_latest_observation();
+    WorldState<NB_ROBOTS,NB_BALLS,TYPE> get_latest_observation();
     void shutdown();
     std::string get_error();
 
 private:
     std::string interface_id_;
-    Writer<Action> writer_;
-    Reader<Action> reader_;
+    Writer<Action,NB_ROBOTS,NB_BALLS,TYPE> writer_;
+    Reader<Action,NB_ROBOTS,NB_BALLS,TYPE> reader_;
     bool should_shoot_;
 
 private:
     static std::mutex mutex_;
 };
 
-template <class Action>
-std::mutex Driver<Action>::mutex_;
+    template <class Action,int NB_ROBOTS,int NB_BALLS,int TYPE>
+    std::mutex Driver<Action,NB_ROBOTS,NB_BALLS,TYPE>::mutex_;
 
 #include "driver.hxx"
 }

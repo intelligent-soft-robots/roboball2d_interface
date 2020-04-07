@@ -53,11 +53,19 @@ def _convert(w1,w2):
             w2.ball_hits_floor_position = w1.ball_hits_floor
         else:
             w2.ball_hits_floor = False
+    w2.balls_hits_racket = w1.balls_hits_racket
     if w1.t is not None:
         w2.t = w1.t
 
 def convert(world_state):
-    sm_world_state = roboball2d_interface.WorldState()
+    nb_robots = len(world_state.robots)
+    nb_balls = len(world_state.balls)
+    if nb_balls == 1 : 
+        sm_world_state = roboball2d_interface.WorldState()
+    elif nb_balls == 5 :
+        sm_world_state = roboball2d_interface.FiveBallsWorldState()
+    else :
+        raise Exception("roboball2d_interface.run_support: only 1 or 5 balls supported")
     _convert(world_state,sm_world_state)
     return sm_world_state
 
@@ -140,14 +148,21 @@ class Simulation:
 
         if robot:
             self.robot_config = DefaultRobotConfig()
+            nb_robots=1
+        else:
+            nb_robots=0
 
         if ball:
             if ball==True:
                 self.ball_config = BallConfig()
+                nb_balls=1
             else :
                 self.ball_config = [BallConfig() for _
                                    in range(ball)]
-
+                nb_balls=ball
+        else:
+            nb_balls=1
+                
         if ball_gun:
             if ball==True:
                 self.ball_gun = DefaultBallGun(self.ball_config)
@@ -184,14 +199,22 @@ class Simulation:
         if robot:
             self.robot_init = DefaultRobotState(self.robot_config)
 
-        self.torques_reader = roboball2d_interface.TorquesReader(interface_id)
-        self.torques_writer = roboball2d_interface.TorquesWriter(interface_id)
-
-        self.mirror_reader = roboball2d_interface.MirrorReader(interface_id)
-        self.mirror_writer = roboball2d_interface.MirrorWriter(interface_id)
-
-        self.ball_gun_reader = roboball2d_interface.BallGunReader(interface_id)
-        self.ball_gun_writer = roboball2d_interface.BallGunWriter(interface_id)
+        if nb_balls==1 :
+            self.torques_reader = roboball2d_interface.TorquesReader(interface_id)
+            self.torques_writer = roboball2d_interface.TorquesWriter(interface_id)
+            self.mirror_reader = roboball2d_interface.MirrorReader(interface_id)
+            self.mirror_writer = roboball2d_interface.MirrorWriter(interface_id)
+            self.ball_gun_reader = roboball2d_interface.BallGunReader(interface_id)
+            self.ball_gun_writer = roboball2d_interface.BallGunWriter(interface_id)
+        elif nb_balls==5:
+            self.torques_reader = roboball2d_interface.FiveBallsTorquesReader(interface_id)
+            self.torques_writer = roboball2d_interface.FiveBallsTorquesWriter(interface_id)
+            self.mirror_reader = roboball2d_interface.FiveBallsMirrorReader(interface_id)
+            self.mirror_writer = roboball2d_interface.FiveBallsMirrorWriter(interface_id)
+            self.ball_gun_reader = roboball2d_interface.FiveBallsBallGunReader(interface_id)
+            self.ball_gun_writer = roboball2d_interface.FiveBallsBallGunWriter(interface_id)
+        else :
+            raise Exception("roboball2d_interface.run_support: only 1 or 5 balls supported")
         
 
 def _stop(switch):

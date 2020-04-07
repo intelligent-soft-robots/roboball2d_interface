@@ -35,6 +35,7 @@ public:
     }
 };
 
+    template<int NB_ROBOTS,int NB_BALLS,int TYPE=0>
 class WorldState
 {
 public:
@@ -45,14 +46,18 @@ public:
           ball_hits_racket(false),
           valid(false),
           t(0)
-    {
-    }
+    {}
     int id;
     Item ball;
+    std::array<Item,NB_BALLS> balls;
     Robot robot;
+    std::array<Item,NB_ROBOTS> robots;
     double ball_hits_floor_position;
     bool ball_hits_floor;
     bool ball_hits_racket;
+    std::array<double,NB_BALLS> balls_hits_floor_position;
+    std::array<bool,NB_BALLS> balls_hits_floor;
+    std::array<bool,NB_BALLS> balls_hits_racket;
     bool valid;
     double t;
     template <class Archive>
@@ -61,9 +66,14 @@ public:
         archive(id,
                 ball,
                 robot,
+		balls,
+		robots,
                 ball_hits_floor_position,
                 ball_hits_floor,
                 ball_hits_racket,
+		balls_hits_floor_position,
+		balls_hits_floor,
+		balls_hits_racket,
                 valid,
                 t);
     }
@@ -73,10 +83,12 @@ public:
         id++;
         return id;
     }
-    void console(bool print_robot, bool print_ball) const
+    void console(bool print_robot=false, bool print_ball=false) const
     {
         std::cout << "\nWorld State " << id << " (" << valid << ") "
                   << " (" << t << ") \n";
+	std::cout << "nb robots: " << robots.size() << "\n";
+	std::cout << "nb balls: " << balls.size() << "\n";
         if (print_ball)
         {
             std::cout << "Ball:\n";

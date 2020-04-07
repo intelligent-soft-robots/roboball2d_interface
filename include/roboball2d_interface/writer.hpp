@@ -4,13 +4,13 @@
 
 namespace roboball2d_interface
 {
-template <class Action>
+    template <class Action,int NB_ROBOTS, int NB_BALLS,int TYPE>
 class Writer
 {
 public:
     Writer(std::string interface_id);
     static void clear(std::string interface_id);
-    void write_world_state(const WorldState& world_state) const;
+    void write_world_state(const WorldState<NB_ROBOTS,NB_BALLS,TYPE>& world_state) const;
     void write_action(const Action& action) const;
 
 private:
