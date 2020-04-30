@@ -21,7 +21,7 @@ def run_reality(configuration,
                 interface_id_ball_gun,
                 render=True):
 
-    
+    # ensures "reality" loops at the desired frequency
     frequency_manager = real_time_tools.FrequencyManager(
         configuration.Interfaces.reality_frequency)
     

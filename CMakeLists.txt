@@ -31,7 +31,8 @@ include_directories(include
 add_library( roboball2d_interface
   src/torques_action.cpp
   src/ball_gun_action.cpp
-  src/mirror_action.cpp )
+  src/mirror_action.cpp
+  src/ball_gun_driver.cpp)
 target_link_libraries(roboball2d_interface ${catkin_LIBRARIES})
 
 #########

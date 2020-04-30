@@ -4,7 +4,7 @@
 
 namespace roboball2d_interface
 {
-    template <class Action,int NB_ROBOTS, int NB_BALLS>
+    template <class Action,int NB_ROBOTS=0, int NB_BALLS=0>
 class Writer
 {
 public:
